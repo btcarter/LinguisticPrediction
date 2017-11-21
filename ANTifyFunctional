@@ -1,0 +1,104 @@
+#! /usr/bin/perl
+#
+# Script to apply ANTS transformation to afni functional data.
+#
+# Original script by Craig Stark
+# Modified by Brock Kirwan
+#
+# Update 10/12/2015: Added affine transformation to the WarpImageMultiTransform call (it didn't have it before??)
+#                    Added "deoblique" step before the afni to nii conversion to deal with alignment issues
+
+
+
+use Getopt::Long;
+#use Shell;
+use Cwd;
+
+if (($ARGV[0] =~ /help/) || (!$ARGV[0])) { 
+   die "Syntax: ANTifyFunctional deformation_matrix model functional_dataset [options]\n  Options:\n   -debug: show what would be done w/o doing it\n"; }
+
+$result = GetOptions("debug" => \$debug);
+if (!$result) { die "Invalid command line options.  Try ANTifyFunctional -help\n"; }
+if ($debug) { print "RUN IN DEBUG MODE- NOTHING ACTUALLY DONE\n"; }
+if ($debug) {  print "Options: \n dir: $dir\n func runs: @funcs\n\n"; }
+
+sub do_commands {
+    foreach $cmd (@_) {
+	if ($debug) { print "$cmd\n"; }
+	else { `$cmd 2>&1`; }
+    }
+}
+
+$deform_matrix = $ARGV[0];
+$model = $ARGV[1];
+$func_data = $ARGV[2];
+@tmp = split /\+/, $func_data;
+$out_name = $tmp[0] . "_ANTS";
+
+# Step 1: Get the needed size info from the functional dataset
+$foo = `3dAttribute -name DATASET_RANK $func_data`;
+@foo2 =split ' ', $foo;
+$ndatasets = $foo2[3];
+
+# Step 1.5: de-oblique the functional dataset
+print "Making the functional deoblique";
+do_commands("3dRefit -deoblique $func_data");
+print "\n";
+
+#Step 2: Make a temporary split of the functional and have it in NIFTI format
+print "Splitting out $ndatasets datasets";
+for ($i = 0; $i < $ndatasets; $i++) {
+	print ".";
+	do_commands("3dAFNItoNIFTI -prefix tmp${$}_$i ${func_data}[$i]");
+}
+#make sure things aren't gzipped
+do_commands("gzip -d *.gz");
+
+print "\n";
+
+# Step 3: Run WarpImageMultiTransform on this
+
+print "Running alignment ";
+for ($i = 0; $i < $ndatasets; $i++) {
+    #print ".";
+	print "WarpImageMultiTransform 3 tmp${$}_$i.nii tmpal${$}_$i.nii ${deform_matrix}Warp.nii -R $model ${deform_matrix}Affine.txt";
+	print "\n";
+	do_commands("WarpImageMultiTransform 3 tmp${$}_$i.nii tmpal${$}_$i.nii ${deform_matrix}Warp.nii -R $model ${deform_matrix}Affine.txt");
+}
+print "\n";
+
+#Step 4: Put them back together
+printf "Re-assembling\n";
+
+$cmd = "3dbucket -prefix $out_name ";
+for ($i = 0; $i < $ndatasets; $i++) {
+	$cmd = $cmd . "-fbuc tmpal${$}_$i.nii "
+}
+do_commands($cmd);
+
+#figure out the sub-brik labels
+$labels = qx(3dAttribute -ssep ':' BRICK_LABS $func_data);
+@labels_split = split(/:/, "$labels");
+print "@labels_split\n";
+
+#resample from 1x1x1mm to whatever the resolution used to be
+$resolution = qx(3dAttribute DELTA $func_data);
+chomp($resolution);
+do_commands("3dresample -dxyz $resolution -prefix ${out_name}_resampled+orig -inset ${out_name}+orig -rmode Cubic");
+
+#stick the sub-brick labels back on
+
+for ($i = 0; $i < $ndatasets; $i++) {
+	print ".";
+	#print "3drefit -sublabel $i \'$labels_split[$i]\' ${out_name}_resampled+orig\n";
+	do_commands("3drefit -sublabel $i \'$labels_split[$i]\' ${out_name}_resampled+orig");
+}
+print "\n";
+
+#make them tlrc
+$cmd = "3drefit -view tlrc -space TLRC ${out_name}_resampled+orig";
+do_commands($cmd);
+
+
+#Step 5: Cleanup
+do_commands("rm tmp${$}*.nii tmpal${$}*.nii");
