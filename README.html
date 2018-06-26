@@ -1,7 +1,0 @@
-This is the repository for the code for the paper entitled <i>Linguistic Networks associated with Lexical, Semantic and Syntactic Predictability in Reading: A Fixation-Related fMRI Study.</i>
-
-Scripts found in the <i>predictability1</i> directory apply to the original analysis. Scripts in directories named <i>predictability2</i>, <i>predictability3</i> and <i>predictability4</i> apply to analyses found in the Data in Brief.
-
-Scripts were written for the SLURM environment. Scripts with the suffix <code>_batch.sh</code> reference scripts with the suffix <code>_job.sh</code>. Preprocessing (prefix: <code>preproc</code>) jobs were performed first, followed by deconvolution (prefix: <code>3dDeconv</code>). Individual statistical results were then warped into MNI space using ANTifyFunctional (via the <code>ants_</code> scripts). ANTifyFunctional is a script originally written by Craig Stark, with some modifications by Brock Kirwan. Group statistical maps were created (</code>3dttest</code>). These were then used to create conjunction maps (<i>make_conjunction_mask.sh</i>).
-
-Ideal HRFs were constructed using scripts found in the <i>timing</i> directory.
