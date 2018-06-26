@@ -2,11 +2,11 @@
 setwd("~/Documents/Research/fMRI_data/Reading/Compute_data/TimingFiles/predictability")
 
 #create the directory to hold timing files.
-if (file.exists("lsa")){
-  setwd("lsa")
+if (file.exists("lsaFunction")){
+  setwd("lsaFunction")
 } else {
-  dir.create("lsa")
-  setwd("lsa")
+  dir.create("lsaFunction")
+  setwd("lsaFunction")
 }
 
 #Read in syn_group.csv as table.
@@ -14,7 +14,7 @@ group <- read.csv("~/Documents/Research/fMRI_data/Reading/Compute_data/TimingFil
 colnames(group)
 
 #remove unneeded columns/values
-group = group[group$Content_Or_Function == "Content", ]
+group = group[group$Content_Or_Function == "Function", ]
 group <- group[,c("RECORDING_SESSION_LABEL","RUN","START_TIME","LSA_Context_Score","IA_FIRST_RUN_DWELL_TIME")]
 
 #remove NA values form group matrix
@@ -26,7 +26,7 @@ group$Parametric_times = paste(group$Parametric_times, (group$IA_FIRST_RUN_DWELL
 
 mdata = group
 colnames(mdata)
-mdata <- mdata[c(1,2,6)]
+mdata <- mdata[c(1,2, 6)]
 library(reshape2)
 mdata <- melt(mdata, id=c("RECORDING_SESSION_LABEL","RUN"))
 mdata = mdata[is.na(mdata$RECORDING_SESSION_LABEL) == FALSE, ]

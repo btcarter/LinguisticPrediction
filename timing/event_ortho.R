@@ -1,7 +1,15 @@
 #Set the working environment.
-setwd("~/Documents/Research/fMRI_data/Reading/Compute_data/TimingFiles/predictability/content2/ortho")
+setwd("~/Documents/Research/fMRI_data/Reading/Compute_data/TimingFiles/predictability")
 
-#Read in syn_group.csv as table.
+#create the directory to hold timing files.
+if (file.exists("ortho")){
+  setwd("ortho")
+} else {
+  dir.create("ortho")
+  setwd("ortho")
+}
+
+#Read in source csv as matrix
 group <- read.csv("~/Documents/Research/fMRI_data/Reading/Compute_data/TimingFiles/source_csvs/predictions.csv")
 colnames(group)
 
@@ -14,7 +22,9 @@ group = group[is.na(group$START_TIME) == FALSE, ]
 group = group[is.na(group$OrthoMatchModel) == FALSE, ]
 
 #Create a column with times in parametric format ([event1 time]*[orthographic]*[POS]*[LSA] ...  [eventn time]*[orthographic]*[POS]*[LSA]) and perform maths to convert times from milliseconds to seconds.
-group$Parametric_times = paste((group$START_TIME/1000), log10(group$OrthoMatchModel), sep = "*")
+#group$Parametric_times = paste((group$START_TIME/1000), log10(group$OrthoMatchModel), sep = "*")
+group$Parametric_times = log(group$OrthoMatchModel)
+group$Parametric_times = paste((group$START_TIME/1000), (group$Parametric_times + abs(min(group$Parametric_times))+1), sep ="*")
 group$Parametric_times = paste(group$Parametric_times,(group$IA_FIRST_RUN_DWELL_TIME/1000), sep = ":")
 
 mdata = group
@@ -36,7 +46,7 @@ for (i in unique(mdata$RECORDING_SESSION_LABEL)) {
     sub1data = dcast(sub1data, RUN ~ variable)
     #max(sub1data[sub1data$RUN == 3, ]$variable)
     sub1data = sub1data[2:ncol(sub1data)]
-    write.table(sub1data, paste(i, "_ortho", ".txt", sep = ""), sep = "\t", na = "", col.names = FALSE, row.names = FALSE, quote = FALSE)
+    write.table(sub1data, paste(i, ".txt", sep = ""), sep = "\t", na = "", col.names = FALSE, row.names = FALSE, quote = FALSE)
     #write.table(sub1data, paste("Luke_Reading_S", i, ".txt", sep = ""), sep = "\t", col.names = FALSE, row.names = FALSE) 
   }
 }

@@ -4,7 +4,7 @@
 #PREPROCESSING BATCH SUBMISSION SCRIPT#
 #######################################
 
-#Written by Ben Carter 01/10/2017
+#Written by Ben Carter 03/27/2017
 
 #############
 #ENVIRONMENT#
@@ -23,12 +23,9 @@ var=`date +"%Y%m%d-%H%M%S"`
 mkdir -p ~/logfiles/$var
 
 #Submit the job script
-for subj in $(ls ${SUBJ_DIR})
-    do
-    sbatch \
-        -o ~/logfiles/${var}/output_${subj}.txt \
-        -e ~/logfiles/${var}/error_${subj}.txt \
-        ${SCRIPT_DIR}/predictability/content2/ants_trans_pred_job.sh \
-        ${subj}
-        sleep 1
-done
+sbatch \
+    -o ~/logfiles/${var}/output_group_fixDur.txt \
+    -e ~/logfiles/${var}/error_group_fixDur.txt \
+    ${SCRIPT_DIR}/predictability/predictability2/3dttest_pred_job.sh \
+    sleep 1
+

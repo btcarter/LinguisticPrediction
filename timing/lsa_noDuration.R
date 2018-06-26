@@ -2,11 +2,11 @@
 setwd("~/Documents/Research/fMRI_data/Reading/Compute_data/TimingFiles/predictability")
 
 #create the directory to hold timing files.
-if (file.exists("lsa")){
-  setwd("lsa")
+if (file.exists("lsa_noDM")){
+  setwd("lsa_noDM")
 } else {
-  dir.create("lsa")
-  setwd("lsa")
+  dir.create("lsa_noDM")
+  setwd("lsa_noDM")
 }
 
 #Read in syn_group.csv as table.
@@ -22,11 +22,10 @@ group = group[is.na(group$START_TIME) == FALSE, ]
 
 #Create a column with times in parametric format ([event1 start time]*[LSA]:[Duration] ...  [eventn start time]*[LSA]:[Duration]) and perform maths to convert times from milliseconds to seconds.
 group$Parametric_times = paste((group$START_TIME/1000), scale(group$LSA_Context_Score), sep = "*")
-group$Parametric_times = paste(group$Parametric_times, (group$IA_FIRST_RUN_DWELL_TIME/1000), sep = ":")
 
 mdata = group
 colnames(mdata)
-mdata <- mdata[c(1,2,6)]
+mdata <- mdata[c(1,2, 6)]
 library(reshape2)
 mdata <- melt(mdata, id=c("RECORDING_SESSION_LABEL","RUN"))
 mdata = mdata[is.na(mdata$RECORDING_SESSION_LABEL) == FALSE, ]
@@ -45,7 +44,7 @@ for (i in unique(mdata$RECORDING_SESSION_LABEL)) {
     #max(sub1data[sub1data$RUN == 3, ]$variable)
     sub1data = sub1data[2:ncol(sub1data)]
     write.table(sub1data, paste(i, ".txt", sep = ""), sep = "\t", na = "", col.names = FALSE, row.names = FALSE, quote = FALSE)
-    }
+  }
 }
 
 summary(mdata$RECORDING_SESSION_LABEL)

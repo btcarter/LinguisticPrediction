@@ -2,27 +2,29 @@
 setwd("~/Documents/Research/fMRI_data/Reading/Compute_data/TimingFiles/predictability")
 
 #create the directory to hold timing files.
-if (file.exists("lsa")){
-  setwd("lsa")
+if (file.exists("orthoFunction")){
+  setwd("orthoFunction")
 } else {
-  dir.create("lsa")
-  setwd("lsa")
+  dir.create("orthoFunction")
+  setwd("orthoFunction")
 }
 
-#Read in syn_group.csv as table.
+#Read in source csv as matrix
 group <- read.csv("~/Documents/Research/fMRI_data/Reading/Compute_data/TimingFiles/source_csvs/predictions.csv")
 colnames(group)
 
 #remove unneeded columns/values
-group = group[group$Content_Or_Function == "Content", ]
-group <- group[,c("RECORDING_SESSION_LABEL","RUN","START_TIME","LSA_Context_Score","IA_FIRST_RUN_DWELL_TIME")]
+group = group[group$Content_Or_Function == "Function", ]
+group <- group[,c("RECORDING_SESSION_LABEL","RUN","START_TIME","OrthoMatchModel","IA_FIRST_RUN_DWELL_TIME")]
 
 #remove NA values form group matrix
 group = group[is.na(group$START_TIME) == FALSE, ]
+group = group[is.na(group$OrthoMatchModel) == FALSE, ]
 
-#Create a column with times in parametric format ([event1 start time]*[LSA]:[Duration] ...  [eventn start time]*[LSA]:[Duration]) and perform maths to convert times from milliseconds to seconds.
-group$Parametric_times = paste((group$START_TIME/1000), scale(group$LSA_Context_Score), sep = "*")
-group$Parametric_times = paste(group$Parametric_times, (group$IA_FIRST_RUN_DWELL_TIME/1000), sep = ":")
+#Create a column with times in parametric format ([event1 time]*[orthographic]*[POS]*[LSA] ...  [eventn time]*[orthographic]*[POS]*[LSA]) and perform maths to convert times from milliseconds to seconds.
+group$Parametric_times = log(group$OrthoMatchModel)
+group$Parametric_times = paste((group$START_TIME/1000), (group$Parametric_times + abs(min(group$Parametric_times))+1), sep ="*")
+group$Parametric_times = paste(group$Parametric_times,(group$IA_FIRST_RUN_DWELL_TIME/1000), sep = ":")
 
 mdata = group
 colnames(mdata)
@@ -35,7 +37,6 @@ mdata = mdata[is.na(mdata$RECORDING_SESSION_LABEL) == FALSE, ]
 for (i in unique(mdata$RECORDING_SESSION_LABEL)) {
   sub1data = mdata[mdata$RECORDING_SESSION_LABEL == i, ]
   colnames(sub1data)
-  #sub1data = sub1data[order(sub1data$RUN), ]
   if (nrow(sub1data) > 0) {
     sub1data = sub1data[c(2:4)]
     sub1data$variable = 1:nrow(sub1data)
@@ -45,7 +46,8 @@ for (i in unique(mdata$RECORDING_SESSION_LABEL)) {
     #max(sub1data[sub1data$RUN == 3, ]$variable)
     sub1data = sub1data[2:ncol(sub1data)]
     write.table(sub1data, paste(i, ".txt", sep = ""), sep = "\t", na = "", col.names = FALSE, row.names = FALSE, quote = FALSE)
-    }
+    #write.table(sub1data, paste("Luke_Reading_S", i, ".txt", sep = ""), sep = "\t", col.names = FALSE, row.names = FALSE) 
+  }
 }
 
 summary(mdata$RECORDING_SESSION_LABEL)
