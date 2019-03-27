@@ -23,7 +23,7 @@ Create the hemodynamic response functions first, followed by preprocessing, deco
 Ideal HRFs were constructed using scripts found in the *timing* directory and were executed locally. Here is a list of these scripts, which analysis they were made for and which hemodynamic profile they created.
 
 | Script | Analysis | What was modeled | Source fixation report |
-|---|---|---|
+|--------|----------|------------------|------------------------|
 | `event_LSA.r` | 1, 2, 4 | Semantic predictability with fixation duration | predictions.csv |
 | `event_pos.R` | 1, 2, 4 | Syntactic predictability with fixation duration | predictions.csv |
 | `event_orth.R`| 1, 2, 4 | Lexical predictability with fixation duration | predictions.csv |
