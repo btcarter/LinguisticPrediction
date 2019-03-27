@@ -5,7 +5,7 @@
 
 #VARIABLES
 START_DIR=$(pwd)
-WORK_DIR=/Users/ben88/Documents/Research/fMRI_data/Reading/Compute_data/Group_Analysis2/
+WORK_DIR=/Users/ben88/Documents/Research/fMRI_data/Reading/Compute_data/Group_Analysis/
 RESULTS_DIR=supplementaryConjunction
 
 #datasets
@@ -24,10 +24,10 @@ SYNTAX3=$WORK_DIR/predictability3/clust_pos+tlrc'[3]'
 SEMANTICS3=$WORK_DIR/predictability3/clust_lsa+tlrc'[3]'
 LEXICAL3=$WORK_DIR/predictability3/clust_ortho+tlrc'[5]'
 
-# predictability5 = predictability1 + function word lexical predictability to baseline
-SYNTAX5=$WORK_DIR/predictability5/clust_pos+tlrc'[3]'
-SEMANTICS5=$WORK_DIR/predictability5/clust_lsa+tlrc'[3]'
-LEXICAL5=$WORK_DIR/predictability5/clust_ortho+tlrc'[5]'
+# predictability4 = predictability1 + function word lexical predictability to baseline
+SYNTAX5=$WORK_DIR/predictability4/clust_pos+tlrc'[3]'
+SEMANTICS5=$WORK_DIR/predictability4/clust_lsa+tlrc'[3]'
+LEXICAL5=$WORK_DIR/predictability4/clust_ortho+tlrc'[5]'
 
 
 #COMMANDS

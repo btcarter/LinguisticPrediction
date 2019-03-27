@@ -66,9 +66,9 @@ fi
 #modeltemplate.nii.gz & ANTifyFunctional in the main study directory
 #Also assumes that ANTs is installed on your system.
 
-cd $subj_DIR/afni_data/predictability5/
+cd $subj_DIR/afni_data/predictability4/
 
-${antifyFunk} $subj_DIR/afni_data/struct_rotated ${TEMPLATE} $subj_DIR/afni_data/predictability5/predictability_deconv_blur5+orig
+${antifyFunk} $subj_DIR/afni_data/struct_rotated ${TEMPLATE} $subj_DIR/afni_data/predictability4/predictability_deconv_blur5+orig
 
 
 #cd back to the main study directory

@@ -155,8 +155,6 @@ fi
 ##########################
 #BRAIN & GM MASK CREATION#
 ##########################
-# If 3dSkullStrip doesn't work, try running the 'fix_afni.txt' script found in the main study directory.
-
 
 #Skull stripping
 if [ ! -f $PPROC/struct_brain.ply ]

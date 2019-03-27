@@ -5,7 +5,7 @@
 
 #VARIABLES
 START_DIR=$(pwd)
-WORK_DIR=/Users/ben88/Documents/Research/fMRI_data/Reading/Compute_data/Group_Analysis2/predictability1
+WORK_DIR=/Users/ben88/Documents/Research/fMRI_data/Reading/Compute_data/Group_Analysis/predictability1
 SYNTAX=$WORK_DIR/pred_pos+tlrc'[3]'
 SEMANTICS=$WORK_DIR/pred_lsa+tlrc'[3]'
 LEXICAL=$WORK_DIR/pred_lsa+tlrc'[5]'

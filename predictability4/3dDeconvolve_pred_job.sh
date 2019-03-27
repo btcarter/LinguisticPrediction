@@ -46,12 +46,12 @@ LOG=/fslhome/ben88/logfiles
 cd $subj_DIR
 cd afni_data
 
-if [ ! -d predictability5 ]
+if [ ! -d predictability4 ]
     then
-        mkdir predictability5
+        mkdir predictability4
 fi
 
-cd predictability5
+cd predictability4
 
 #####################
 #REGRESSION ANALYSIS#

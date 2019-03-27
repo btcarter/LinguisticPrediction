@@ -30,8 +30,6 @@ HOME_DIR=/fslhome/ben88/compute/Reading/Compute_data
         TIMING_POS=$TIMING/pos/${1}.txt
         TIMING_LSA=$TIMING/lsa/${1}.txt
         TIMING_ORTHO=$TIMING/ortho/${1}.txt
-        TIMING_FREQ=$TIMING/frequency/${1}.txt
-        TIMING_LENG=$TIMING/length/${1}.txt
 LOG=/fslhome/ben88/logfiles
 
 ##########
