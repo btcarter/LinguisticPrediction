@@ -11,7 +11,7 @@ This repository was created to provide additional documentation of the methods u
 Data to test these scripts are provided in *sampleData*. Eye tracking data are found in *eyetracking/source*. These were generated using SR Research Software (Data Viewer). Individual timing files were constructed from these using various scripts (see below) and are found in *eyetracking/timing*. MRI data for each participant can be found in *sampleData/mri/* with a directory for each participant (*Luke_Reading_S*). Participant DICOMS are found in *raw_data* and output are found in *afni_data*. Motion censor files are contained in *motion*. *structuralTemplate* contains the structural templates used to warp individual statistical results into MNI space.
 
 ### Scripts
-These scripts were written for both the remote SLURM and local computing environment. In order to test or implement them it will be necessary to update the paths for both inputs and outputs. Variables for such are located at the beginning of each script.
+These scripts were written for a UNIX based system using both the a remote SLURM and local computing environment. In order to test or implement the scripts it will be necessary to update the paths for both inputs and outputs required by the scripts. Variables for such are located at the beginning of each script. If a you do not have access to a SLURM based computing system then you will also need to modify some of these scripts so they can run on your system.
 
 #### Dependencies
 <ul>
@@ -27,7 +27,7 @@ Create the hemodynamic response functions first, followed by preprocessing, deco
 Ideal HRFs were constructed using scripts found in the *timing* directory and were executed locally. Here is a list of these scripts, which analysis they were made for and which hemodynamic profile they created.
 
 | Script | Analysis | What was modeled | Source fixation report |
-|--------|----------|------------------|------------------------|
+|--------|:--------:|------------------|------------------------|
 | `event_LSA.r` | 1, 2, 4 | Semantic predictability with fixation duration | predictions.csv |
 | `event_pos.R` | 1, 2, 4 | Syntactic predictability with fixation duration | predictions.csv |
 | `event_orth.R`| 1, 2, 4 | Lexical predictability with fixation duration | predictions.csv |
@@ -46,9 +46,9 @@ Deconvolution scripts were also written for the SLURM environment. Each *predict
 
 Each directory contains a scripts named `3dDeconvolve_pred_batch.sh`, `3dDeconvolve_pred_job.sh`, `ants_trans_pred_batch.sh`, `ants_trans_pred_job.sh`, `3dttest_pred_batch.sh`, and `3dttest_pred_job.sh`. Scripts with the suffix `_batch.sh` reference scripts with the suffix `_job.sh`. The names are somewhat explanatory of function, and scripts were executed as follows: Deconvolution (prefix: `3dDeconvolve`) was performed first. This script relies on paths to the HRF profiles and the BRIK and HEAD files created during preprocessing (see `ENVIRONMENT`). This also applies a 5mm blur to the output. ANTs transformation was applied next. As you may have anticipated please ensure the proper paths are set for the variables in `ENVIRONMENT`. This script converts T<sub>1</sub> DICOMS to NIFTI format and applies an ANTs transformation to warp a participant's structural data into study template space ([see Nathan Muncy's GitHub for more information on how to make one](https://github.com/nmuncy/Linguistics)). This step is dependent on `ANTifyFunctional` (a script originally written by Craig Stark, with some modifications by Brock Kirwan). Output from deconvolution and ANTs transformation can be found within a directory named for the pipeline (e.g. *predictability1*) within the participant's *afni_data* directory.
 
-Student's T-tests were then performed via `3dttest_pred_batch.sh` and `3dttest_pred_job.sh` and group statistical maps were output to the *Group_Analysis* directory. Lines 54-288 will need to be edited in `3dttest_pred_job.sh` in order to test this step as only a subset of the subjects are offered in the sample dataset. The full dataset can be made available upon request. Output from this step can be found in *results*, and then inside a directory named for the particular analysis (i.e. *predictability1*, *predictability2*, *predictability3*, *predictability4*). Output includes group statistical maps (BRIK and HEAD),
+Student's T-tests were then performed via `3dttest_pred_batch.sh` and `3dttest_pred_job.sh` and group statistical maps were output to the *Group_Analysis* directory. Lines 54-288 will need to be edited in `3dttest_pred_job.sh` in order to test this step as only a subset of the subjects are offered in the sample dataset. The full dataset can be made available upon request. Output from this step can be found in *results*, and then inside a directory named for the particular analysis (i.e. *predictability1*, *predictability2*, *predictability3*, *predictability4*). Output includes group statistical maps (BRIK and HEAD), cluster threshold values produced via `-Clustim` (output as `.1D` files).
 
-Group results were then used to create conjunction maps. Conjunction maps for the primary analysis were created via `make_conjunction_mask.sh`. Output from this script can be found within *results/predictability1/*. Conjunction maps comparing the second, third and fourth datasets to the primary were created via `supplementaryConjunction.sh`. Output from this script can be found in *results/supplementaryConjunction*. Once again, ensure proper paths are set within the script under `VARIABLES` when testing these scripts.
+Group results were then used to create conjunction maps. Conjunction maps for the primary analysis were created via `make_conjunction_mask.sh`. Output from this script can be found within *results/predictability1/*, and are named with the prefix `clust_*`. Conjunction maps comparing the second, third and fourth datasets to the primary were created via `supplementaryConjunction.sh`. Output from this script can be found in *results/supplementaryConjunction* and are named according to the conditions being compared (e.g. `negLexicalConj1v2+tlrc.BRIK.gz` is a comparison of the negative associations of the lexical predictability condition between the first and second analyses). Once again, ensure proper paths are set within the script under `VARIABLES` when testing these scripts.
 
 #### fMRI script order and output
 
@@ -56,14 +56,14 @@ Group results were then used to create conjunction maps. Conjunction maps for th
 |------|--------|-----------------|
 | Preprocessing | `preproc_batch.sh` & `preproc_job.sh` | Remote SLURM |
 | Deconvolution | `3dDeconvolve_pred_batch.sh` & `3dDeconvolve_pred_job.sh` | Remote SLURM |
-| ANTs Transformation | `ants_trans_pred_batch.sh` & `ants_trans_pred_job.sh` | Remote SLURM |
+| ANTs transformation | `ants_trans_pred_batch.sh` & `ants_trans_pred_job.sh` | Remote SLURM |
 | T-test | `3dttest_pred_batch.sh` & `3dttest_pred_job.sh` | Remote SLURM |
-| Conjunction Maps | `make_conjunction_mask.sh` | Local |
-| ^ | `supplementaryConjunction.sh` | Local |
+| Conjunction maps | `make_conjunction_mask.sh` | Local |
+| Supplementary conjunction maps | `supplementaryConjunction.sh` | Local |
 
 ### FAQs
 
-Q: Why didn't I use BIDS format when structuring the data?
+Q: Why didn't I use BIDS format when structuring the data and writing the scripts?
 A: Didn't know about it at the time I put this together. Now that I do I use it in my latest projects. For more information on BIDs format see [Gorgolewski, et al., 2016](https://www.nature.com/articles/sdata201644).
 
 Q: What do the terms LSA, POS and ORTHO stand for? They appear everywhere.
