@@ -50,7 +50,7 @@ Student's T-tests were then performed via `3dttest_pred_batch.sh` and `3dttest_p
 
 Group results were then used to create conjunction maps. Conjunction maps for the primary analysis were created via `make_conjunction_mask.sh`. Output from this script can be found within *results/predictability1/*, and are named with the prefix `clust_*`. Conjunction maps comparing the second, third and fourth datasets to the primary were created via `supplementaryConjunction.sh`. Output from this script can be found in *results/supplementaryConjunction* and are named according to the conditions being compared (e.g. `negLexicalConj1v2+tlrc.BRIK.gz` is a comparison of the negative associations of the lexical predictability condition between the first and second analyses). Once again, ensure proper paths are set within the script under `VARIABLES` when testing these scripts.
 
-#### fMRI script order and output
+#### fMRI script order
 
 | Step | Script | Local or Remote |
 |------|--------|-----------------|
